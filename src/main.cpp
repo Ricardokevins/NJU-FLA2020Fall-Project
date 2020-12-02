@@ -6,7 +6,7 @@ int main()
 {
     while(1)
     {
-        cout<<"$ "<<endl;
+        cout<<"$ ";
         string input;
         cin>>input;
         cout<<input<<endl;
