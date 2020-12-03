@@ -11,4 +11,10 @@ iostream
 -
 string
 -
+vector
+-
+string.h
+-
+fstream
+-
 
