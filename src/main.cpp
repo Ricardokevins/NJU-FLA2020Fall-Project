@@ -56,6 +56,7 @@ public:
     vector<string>F;
     int N;
     vector<delta_Func>delta_Funcs;
+
     TM(vector<string>a,vector<string>b,vector<string>c,string d,string e,vector<string>f,int g,vector<delta_Func>h)
     {
         Q=a;
@@ -100,7 +101,7 @@ TM get_TM(string input)
     vector<string>raw_input;
     ifstream in(input);
     string line;
-    cout<<input<<endl;
+
     if(in) 
     {
         while (getline (in, line)) 
@@ -113,7 +114,48 @@ TM get_TM(string input)
         cout <<"no such file" << endl;
     }
     
-    
+    for(int i(0);i<raw_input.size();i++)
+    {
+        //Hit empty line and skip
+        if(raw_input[i].size()==0)
+        {
+            continue;
+        }
+        //Hit note no need to parse
+        if(raw_input[i][0]==';')
+        {
+            continue;
+        }
+        //Meet  sate  set line
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q'))
+        {
+            int bracket_start_pos=-1;
+            int bracket_end_pos=-1;
+            for(int j(0);j<raw_input[i].size();j++)
+            {
+                if(raw_input[i][j] == '{')
+                {
+
+                    bracket_start_pos=j;
+                }
+                else
+                {
+                    if(raw_input[i][j]=='}')
+                    {
+                        bracket_end_pos=j;
+                    }
+                }
+            }
+            string cut = raw_input[i].substr(bracket_start_pos+1,bracket_end_pos-bracket_start_pos-1);
+            vector<string>variety;
+            Q=split(cut,",");      
+        }
+
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
+        {
+
+        }
+    }
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs);
     return target_TM;
 
