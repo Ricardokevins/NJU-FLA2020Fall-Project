@@ -9,8 +9,7 @@ vector<string> split(const string& str, const string& delim)
 {
 	vector<string> res;
 	if("" == str) return res;
-	//先将要切割的字符串从string类型转换为char*类型
-	char * strs = new char[str.length() + 1] ; //不要忘了
+	char * strs = new char[str.length() + 1] ;
 	strcpy(strs, str.c_str()); 
  
 	char * d = new char[delim.length() + 1];
@@ -19,8 +18,8 @@ vector<string> split(const string& str, const string& delim)
 	char *p = strtok(strs, d);
 	while(p) 
     {
-		string s = p; //分割得到的字符串转换为string类型
-		res.push_back(s); //存入结果数组
+		string s = p; 
+		res.push_back(s); 
 		p = strtok(NULL, d);
 	}
  
@@ -77,18 +76,32 @@ public:
 
 };
 
-int TM_parser(vector<string> input)
+// Use this function to cut "{}" and get inside string
+string cut_bracket(string a)
 {
+    int bracket_start_pos=-1;
+    int bracket_end_pos=-1;
+    for(int j(0);j<a.size();j++)
+    {
+        if(a[j] == '{')
+        {
 
-    return 0;
+            bracket_start_pos=j;
+        }
+        else
+        {
+            if(a[j]=='}')
+            {
+                bracket_end_pos=j;
+            }
+        }
+    }
+    string cut = a.substr(bracket_start_pos+1,bracket_end_pos-bracket_start_pos-1);
+    return cut;
 }
 
-TM get_TM(string input)
+TM TM_parser(vector<string> raw_input)
 {
-    //TODO: to parse the file and get Turing Machhine here
-    // Use This function to get turgin machine
-    // Just read the file first and pass content to parser
-
     vector<string>Q;
     vector<string>S;
     vector<string>G;
@@ -97,11 +110,63 @@ TM get_TM(string input)
     vector<string>F;
     int N;
     vector<delta_Func>delta_Funcs;
+    for(int i(0);i<raw_input.size();i++)
+    {
+        //Hit empty line and skip
+        if(raw_input[i].size()==0)
+        {
+            continue;
+        }
+        //Hit note which is no need to parse
+        if(raw_input[i][0]==';')
+        {
+            continue;
+        }
+        //Meet  sate  set line And try to set Q
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q'))
+        {
+            string cut=cut_bracket(raw_input[i]);
+            vector<string>variety;
+            Q=split(cut,",");   
+            continue;   
+        }
+        //Meet Input Symbol Set And try yo set S
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
+        {
+            string cut=cut_bracket(raw_input[i]);
+            vector<string>variety;
+            S=split(cut,",");      
+            continue;
+        }
+        //Meet Type Symbol Set And try yo set G
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='G'))
+        {
+            string cut=cut_bracket(raw_input[i]);
+            vector<string>variety;
+            G=split(cut,",");      
+            continue;
+        }
+        //Meet Start State and try to set q0
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='q')&& (raw_input[i][2]=='0'))
+        {
+            q0=raw_input[i].substr(raw_input[i].size()-1,1);
+        }
+
+    }
+    TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs);
+    return target_TM;
+
+}
+
+TM get_TM(string input)
+{
+    //TODO: to parse the file and get Turing Machhine here
+    // Use This function to get turgin machine
+    // Just read the file first and pass content to parser
 
     vector<string>raw_input;
     ifstream in(input);
     string line;
-
     if(in) 
     {
         while (getline (in, line)) 
@@ -113,52 +178,7 @@ TM get_TM(string input)
     {
         cout <<"no such file" << endl;
     }
-    
-    for(int i(0);i<raw_input.size();i++)
-    {
-        //Hit empty line and skip
-        if(raw_input[i].size()==0)
-        {
-            continue;
-        }
-        //Hit note no need to parse
-        if(raw_input[i][0]==';')
-        {
-            continue;
-        }
-        //Meet  sate  set line
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q'))
-        {
-            int bracket_start_pos=-1;
-            int bracket_end_pos=-1;
-            for(int j(0);j<raw_input[i].size();j++)
-            {
-                if(raw_input[i][j] == '{')
-                {
-
-                    bracket_start_pos=j;
-                }
-                else
-                {
-                    if(raw_input[i][j]=='}')
-                    {
-                        bracket_end_pos=j;
-                    }
-                }
-            }
-            string cut = raw_input[i].substr(bracket_start_pos+1,bracket_end_pos-bracket_start_pos-1);
-            vector<string>variety;
-            Q=split(cut,",");      
-        }
-
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
-        {
-
-        }
-    }
-    TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs);
-    return target_TM;
-
+    return TM_parser(raw_input);
 
 }
 
