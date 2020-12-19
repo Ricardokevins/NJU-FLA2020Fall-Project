@@ -68,9 +68,29 @@ public:
         delta_Funcs=h;
     }
     
+    void Print_state()
+    {
+        cout<<"State Set"<<endl;
+        for(int i(0);i<Q.size();i++)
+        {
+            cout<<Q[i]<<" ";
+        }
+        cout<<endl;
+    }
+
+    bool check_input_legal_or_not(string input)
+    {
+        for(int i(0);i<input.size();i++)
+        {
+            
+        }
+        cerr << "cerr: hello world\n";
+    }
+
     bool solve(string input)
     {
         //TODO: implement of TM should be done here
+
         return true;
     }
 
@@ -126,7 +146,6 @@ TM TM_parser(vector<string> raw_input)
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q'))
         {
             string cut=cut_bracket(raw_input[i]);
-            vector<string>variety;
             Q=split(cut,",");   
             continue;   
         }
@@ -134,7 +153,6 @@ TM TM_parser(vector<string> raw_input)
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
         {
             string cut=cut_bracket(raw_input[i]);
-            vector<string>variety;
             S=split(cut,",");      
             continue;
         }
@@ -142,7 +160,6 @@ TM TM_parser(vector<string> raw_input)
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='G'))
         {
             string cut=cut_bracket(raw_input[i]);
-            vector<string>variety;
             G=split(cut,",");      
             continue;
         }
@@ -150,10 +167,55 @@ TM TM_parser(vector<string> raw_input)
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='q')&& (raw_input[i][2]=='0'))
         {
             q0=raw_input[i].substr(raw_input[i].size()-1,1);
+            continue;
         }
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='B'))
+        {
+            B=raw_input[i].substr(raw_input[i].size()-1,1);
+            continue;
+        }
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='F'))
+        {
+            string cut=cut_bracket(raw_input[i]);
+            F=split(cut,",");      
+            continue;
+        }
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='N'))
+        {
+            N=stoi(raw_input[i].substr(raw_input[i].size()-1,1));
+            continue;  
+        }
+        else
+        {
+            vector<string> Tokens=split(raw_input[i]," "); 
+            if(Tokens.size()!=5)
+            {
+                cout<<"Hit Bad Trap"<<endl;
+                continue;
+            }
+            string cur_state=Tokens[0];
+            string tape_char=Tokens[1];
+            string new_char=Tokens[2];
+            string next_direction=Tokens[3];
+            string next_state=Tokens[4];
+            if(tape_char.size()==new_char.size()&&new_char.size()==next_direction.size()&&next_direction.size()==N)
+            {
+                ;
+            }
+            else
+            {
+                cout<<"Hit Bad Trap"<<endl;
+                continue;
+            }
+            delta_Func d=delta_Func(cur_state,tape_char,new_char,next_direction,next_state);
+            delta_Funcs.push_back(d);  
+        }
+        
+
 
     }
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs);
+    target_TM.Print_state();
     return target_TM;
 
 }
