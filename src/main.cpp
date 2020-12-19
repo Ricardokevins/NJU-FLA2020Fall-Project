@@ -61,12 +61,13 @@ public:
     vector<delta_Func>delta_Funcs;
 
     //parameters during running
-
+    bool verbose_mode;
     vector<string>tapes;
     vector<int>head_pos;
     string cur_state;
+    vector<int>leftmost_tag;
 
-    TM(vector<string>a,vector<char>b,vector<char>c,string d,char e,vector<string>f,int g,vector<delta_Func>h)
+    TM(vector<string>a,vector<char>b,vector<char>c,string d,char e,vector<string>f,int g,vector<delta_Func>h,bool verbose_flag)
     {
         Q=a;
         S=b;
@@ -76,8 +77,8 @@ public:
         F=f;
         N=g;
         delta_Funcs=h;
+        verbose_mode=verbose_flag;
 
-        
     }
     
     void Print_state()
@@ -104,7 +105,7 @@ public:
             }
             if(flag==0)
             {
-                cerr << "illegal input\n";
+                //cerr << "illegal input\n";
                 return false;
             }
         }
@@ -112,32 +113,33 @@ public:
         
     }
 
-    void Verbose()
+    void Verbose(int step)
     {
+        cout<<std::left<<"Step    : "<<std::left<<step<<endl;
         for(int i(0);i<N;i++)
         {
-            cout<<"Index "<<i<<" : ";
+            cout<<std::left<<"Index "<<std::left<<i<<std::left<<" : ";
             for(int j(0);j<tapes[i].size();j++)
             {
-                cout<<j<<" ";
+                cout<<std::left<<leftmost_tag[i]+j<<std::left<<" ";
             }
             cout<<endl;
-            cout<<"Tape  "<<i<<" : ";
+            cout<<std::left<<"Tape  "<<std::left<<i<<std::left<<" : ";
             for(int j(0);j<tapes[i].size();j++)
             {
-                cout<<tapes[i][j]<<" ";
+                cout<<std::left<<tapes[i][j]<<std::left<<" ";
             }
             cout<<endl;
-            cout<<"Head  "<<i<<" : ";
+            cout<<std::left<<"Head  "<<std::left<<i<<" : ";
             for(int j(0);j<tapes[i].size();j++)
             {
                 if(j==head_pos[i])
                 {
-                    cout<<"^"<<" ";
+                    cout<<std::left<<"^"<<std::left<<" ";
                 }
                 else           
                 {
-                    cout<<" "<<" ";
+                    cout<<std::left<<" "<<std::left<<" ";
                 }
             }
             cout<<endl;
@@ -149,6 +151,7 @@ public:
     //use this function to cut unnessary Empty Tokens
     void formula_tape()
     {
+        
         for(int i(0);i<N;i++)
         {
             for(int j(0);j<head_pos[i];)
@@ -157,6 +160,7 @@ public:
                 {
                     tapes[i].erase(0,1);
                     head_pos[i]-=1;
+                    leftmost_tag[i]+=1;
                 }
                 else
                 {
@@ -180,12 +184,18 @@ public:
 
     bool solve(string input)
     {
-        //TODO: implement of TM should be done here
         if(check_input_legal_or_not(input)!=true)
         {
-            return false;
+            if(verbose_mode==false)
+                return false;
+            else
+            {
+                //TODO:print wrong grammer to be implement here
+                ;
+            }
+            
         }
-        int Step=0;
+        int step=0;
         cur_state=q0;
         for(int i(0);i<N;i++)
         {
@@ -193,17 +203,15 @@ public:
             temp_tape.push_back(B);
             tapes.push_back(temp_tape);
             head_pos.push_back(0);
+            leftmost_tag.push_back(0);
         }
         //init Tape1 especically
         tapes[0]=input;
-        Verbose();
-        int step=0;
+        if(verbose_mode == true)
+            Verbose(step);
+        
         while(true)
         {
-            if(step>50)
-            {
-                break;
-            }
             step+=1;
             int matched_transition_function_pos=-1;
             for(int i(0);i<delta_Funcs.size();i++)
@@ -226,10 +234,10 @@ public:
             {
                 break;
             }
-            else
-            {
-                delta_Funcs[matched_transition_function_pos].cout_rule();
-            }
+            // else
+            // {
+            //     delta_Funcs[matched_transition_function_pos].cout_rule();
+            // }
             
             for(int j(0);j<tapes.size();j++)
             {
@@ -252,12 +260,16 @@ public:
                     {
                         tapes[i].insert(0,1,B);
                         head_pos[i]=0;
+                        leftmost_tag[i]-=1;
                     }
                 }
             }
+
             cur_state=delta_Funcs[matched_transition_function_pos].next_state;
+
             formula_tape();
-            Verbose();
+            if (verbose_mode==true)
+                Verbose(step);
             for(int i(0);i<F.size();i++)
             {
                 if(cur_state==F[i])
@@ -266,6 +278,17 @@ public:
                 }
             }
         }
+        if(verbose_mode==true)
+        {
+            cout<<"Result: "<<tapes[0]<<endl;
+            cout<<" ==================== END ===================="<<endl;
+        }
+        else
+        {
+            cout<<tapes[0]<<endl;
+        }
+        
+        
         return true;
     }
 
@@ -295,7 +318,7 @@ string cut_bracket(string a)
     return cut;
 }
 
-TM TM_parser(vector<string> raw_input)
+TM TM_parser(vector<string> raw_input,bool verbose_flag)
 {
     vector<string>Q;
     vector<char>S;
@@ -408,13 +431,13 @@ TM TM_parser(vector<string> raw_input)
 
 
     }
-    TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs);
-    target_TM.Print_state();
+    TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs,verbose_flag);
+    // target_TM.Print_state();
     return target_TM;
 
 }
 
-TM get_TM(string input)
+TM get_TM(string input,bool verbose_flag)
 {
     //TODO: to parse the file and get Turing Machhine here
     // Use This function to get turgin machine
@@ -434,15 +457,15 @@ TM get_TM(string input)
     {
         cout <<"no such file" << endl;
     }
-    return TM_parser(raw_input);
+    return TM_parser(raw_input,verbose_flag);
 
 }
 
-int TM_Solve(string raw_TM,string raw_input)
+int TM_Solve(string raw_TM,string raw_input,bool verbose_flag)
 {
     //Get input string
     //And filename of Turing machine
-    TM solver=get_TM(raw_TM);
+    TM solver=get_TM(raw_TM,verbose_flag);
     solver.solve(raw_input);
     return 1;
 }
@@ -475,7 +498,7 @@ int comandline_parser(string input)
         {
             string raw_TM=result[2];
             string raw_input=result[3];
-            TM_Solve(raw_TM,raw_input);
+            TM_Solve(raw_TM,raw_input,true);
         }
         
     }
@@ -488,7 +511,7 @@ int comandline_parser(string input)
     {
         string raw_TM=result[1];
         string raw_input=result[2];
-        TM_Solve(raw_TM,raw_input);
+        TM_Solve(raw_TM,raw_input,false);
         return -1;
     }
     
