@@ -42,21 +42,31 @@ public:
         direction=d;
         next_state=e;
     }
+    void cout_rule()
+    {
+        cout<<cur_state<<" "<<head<<" "<<newChar<<" "<<direction<<" "<<next_state<<endl;
+    }
 };
 
 class TM
 {
 public:
     vector<string>Q;
-    vector<string>S;
-    vector<string>G;
+    vector<char>S;
+    vector<char>G;
     string q0;
-    string B;
+    char B;
     vector<string>F;
     int N;
     vector<delta_Func>delta_Funcs;
 
-    TM(vector<string>a,vector<string>b,vector<string>c,string d,string e,vector<string>f,int g,vector<delta_Func>h)
+    //parameters during running
+
+    vector<string>tapes;
+    vector<int>head_pos;
+    string cur_state;
+
+    TM(vector<string>a,vector<char>b,vector<char>c,string d,char e,vector<string>f,int g,vector<delta_Func>h)
     {
         Q=a;
         S=b;
@@ -66,6 +76,8 @@ public:
         F=f;
         N=g;
         delta_Funcs=h;
+
+        
     }
     
     void Print_state()
@@ -82,15 +94,178 @@ public:
     {
         for(int i(0);i<input.size();i++)
         {
-            
+            int flag=0;
+            for(int j(0);j<S.size();j++)
+            {
+                if(input[i]==S[j])
+                {
+                    flag=1;
+                }
+            }
+            if(flag==0)
+            {
+                cerr << "illegal input\n";
+                return false;
+            }
         }
-        cerr << "cerr: hello world\n";
+        return true;
+        
+    }
+
+    void Verbose()
+    {
+        for(int i(0);i<N;i++)
+        {
+            cout<<"Index "<<i<<" : ";
+            for(int j(0);j<tapes[i].size();j++)
+            {
+                cout<<j<<" ";
+            }
+            cout<<endl;
+            cout<<"Tape  "<<i<<" : ";
+            for(int j(0);j<tapes[i].size();j++)
+            {
+                cout<<tapes[i][j]<<" ";
+            }
+            cout<<endl;
+            cout<<"Head  "<<i<<" : ";
+            for(int j(0);j<tapes[i].size();j++)
+            {
+                if(j==head_pos[i])
+                {
+                    cout<<"^"<<" ";
+                }
+                else           
+                {
+                    cout<<" "<<" ";
+                }
+            }
+            cout<<endl;
+        }
+        cout<<"State   : "<<cur_state<<endl;
+        cout<<"---------------------------------------------"<<endl;
+    }
+
+    //use this function to cut unnessary Empty Tokens
+    void formula_tape()
+    {
+        for(int i(0);i<N;i++)
+        {
+            for(int j(0);j<head_pos[i];)
+            {
+                if(tapes[i][j]==B && tapes[i].size()!=1)
+                {
+                    tapes[i].erase(0,1);
+                    head_pos[i]-=1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for(int j(tapes[i].size()-1);j>head_pos[i];)
+            {
+                if(tapes[i][j]==B && tapes[i].size()!=1)
+                {
+                    tapes[i].pop_back();
+                    j--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 
     bool solve(string input)
     {
         //TODO: implement of TM should be done here
-
+        if(check_input_legal_or_not(input)!=true)
+        {
+            return false;
+        }
+        int Step=0;
+        cur_state=q0;
+        for(int i(0);i<N;i++)
+        {
+            string temp_tape;
+            temp_tape.push_back(B);
+            tapes.push_back(temp_tape);
+            head_pos.push_back(0);
+        }
+        //init Tape1 especically
+        tapes[0]=input;
+        Verbose();
+        int step=0;
+        while(true)
+        {
+            if(step>50)
+            {
+                break;
+            }
+            step+=1;
+            int matched_transition_function_pos=-1;
+            for(int i(0);i<delta_Funcs.size();i++)
+            {      
+                int match_flag=1;   
+                for(int j(0);j<tapes.size();j++)
+                {
+                    if(tapes[j][head_pos[j]]!=delta_Funcs[i].head[j])
+                    {
+                        match_flag=0;
+                    }
+                }
+                if(cur_state==delta_Funcs[i].cur_state&&match_flag==1)
+                {
+                    matched_transition_function_pos=i;
+                    break;
+                }
+            }
+            if(matched_transition_function_pos==-1)
+            {
+                break;
+            }
+            else
+            {
+                delta_Funcs[matched_transition_function_pos].cout_rule();
+            }
+            
+            for(int j(0);j<tapes.size();j++)
+            {
+                tapes[j][head_pos[j]]=delta_Funcs[matched_transition_function_pos].newChar[j];
+            }
+            for(int i(0);i<head_pos.size();i++)
+            {
+                if(delta_Funcs[matched_transition_function_pos].direction[i]=='r')
+                {
+                    head_pos[i]+=1;
+                    if(head_pos[i]>=tapes[i].size())
+                    {
+                        tapes[i].push_back(B);
+                    }
+                }               
+                if(delta_Funcs[matched_transition_function_pos].direction[i]=='l')
+                {
+                    head_pos[i]-=1;
+                    if(head_pos[i]<0)
+                    {
+                        tapes[i].insert(0,1,B);
+                        head_pos[i]=0;
+                    }
+                }
+            }
+            cur_state=delta_Funcs[matched_transition_function_pos].next_state;
+            formula_tape();
+            Verbose();
+            for(int i(0);i<F.size();i++)
+            {
+                if(cur_state==F[i])
+                {
+                    break;
+                }
+            }
+        }
         return true;
     }
 
@@ -123,15 +298,25 @@ string cut_bracket(string a)
 TM TM_parser(vector<string> raw_input)
 {
     vector<string>Q;
-    vector<string>S;
-    vector<string>G;
+    vector<char>S;
+    vector<char>G;
     string q0;
-    string B;
+    char B;
     vector<string>F;
     int N;
     vector<delta_Func>delta_Funcs;
     for(int i(0);i<raw_input.size();i++)
     {
+        string temp_string=raw_input[i];
+        raw_input[i]="";
+        for(int l(0);l<temp_string.size();l++)
+        {
+            if(temp_string[l]==';')
+            {
+                break;
+            }
+            raw_input[i].push_back(temp_string[l]);
+        }
         //Hit empty line and skip
         if(raw_input[i].size()==0)
         {
@@ -153,14 +338,22 @@ TM TM_parser(vector<string> raw_input)
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
         {
             string cut=cut_bracket(raw_input[i]);
-            S=split(cut,",");      
+            vector<string>temp=split(cut,",");  
+            for(int j=0;j<temp.size();j++)
+            {
+                S.push_back(temp[j][0]);
+            }    
             continue;
         }
         //Meet Type Symbol Set And try yo set G
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='G'))
         {
             string cut=cut_bracket(raw_input[i]);
-            G=split(cut,",");      
+            vector<string>temp=split(cut,","); 
+            for(int j=0;j<temp.size();j++)
+            {
+                G.push_back(temp[j][0]);
+            }         
             continue;
         }
         //Meet Start State and try to set q0
@@ -171,7 +364,8 @@ TM TM_parser(vector<string> raw_input)
         }
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='B'))
         {
-            B=raw_input[i].substr(raw_input[i].size()-1,1);
+            string temp=raw_input[i].substr(raw_input[i].size()-1,1);
+            B=temp[0];
             continue;
         }
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='F'))
@@ -249,6 +443,7 @@ int TM_Solve(string raw_TM,string raw_input)
     //Get input string
     //And filename of Turing machine
     TM solver=get_TM(raw_TM);
+    solver.solve(raw_input);
     return 1;
 }
 
