@@ -91,7 +91,7 @@ public:
         cout<<endl;
     }
 
-    bool check_input_legal_or_not(string input)
+    int check_input_legal_or_not(string input)
     {
         for(int i(0);i<input.size();i++)
         {
@@ -106,10 +106,10 @@ public:
             if(flag==0)
             {
                 //cerr << "illegal input\n";
-                return false;
+                return i;
             }
         }
-        return true;
+        return -1;
         
     }
 
@@ -182,19 +182,38 @@ public:
         }
     }
 
-    bool solve(string input)
+    int solve(string input)
     {
-        if(check_input_legal_or_not(input)!=true)
+        int check_result=check_input_legal_or_not(input);
+        if(check_result!=-1)
         {
             if(verbose_mode==false)
-                return false;
+                return -1;
             else
             {
-                //TODO:print wrong grammer to be implement here
-                ;
+                cout<<"Input: "<<input<<endl;
+                cout<<" ==================== ERR ===================="<<endl;
+                cout<<"error: "<<'A'<<" was not declared in the set of input symbols"<<endl;
+                cout<<"Input: "<<input<<endl;
+                cout<<"       ";
+                for(int i(0);i<check_result;i++)
+                {
+                    cout<<" ";
+                }
+                cout<<"^"<<endl;
+                return -1;
             }
             
         }
+        else
+        {
+            if(verbose_mode==true)
+            {
+                cout<<"Input: "<<input<<endl;
+                cout<<"==================== RUN ===================="<<endl;
+            }
+        }
+        
         int step=0;
         cur_state=q0;
         for(int i(0);i<N;i++)
@@ -289,7 +308,7 @@ public:
         }
         
         
-        return true;
+        return 1;
     }
 
 };
@@ -466,8 +485,8 @@ int TM_Solve(string raw_TM,string raw_input,bool verbose_flag)
     //Get input string
     //And filename of Turing machine
     TM solver=get_TM(raw_TM,verbose_flag);
-    solver.solve(raw_input);
-    return 1;
+    int res=solver.solve(raw_input);
+    return res;;
 }
 
 int comandline_parser(string input)
@@ -498,7 +517,8 @@ int comandline_parser(string input)
         {
             string raw_TM=result[2];
             string raw_input=result[3];
-            TM_Solve(raw_TM,raw_input,true);
+            int res=TM_Solve(raw_TM,raw_input,true);
+            return res;
         }
         
     }
@@ -511,29 +531,64 @@ int comandline_parser(string input)
     {
         string raw_TM=result[1];
         string raw_input=result[2];
-        TM_Solve(raw_TM,raw_input,false);
-        return -1;
+        int res=TM_Solve(raw_TM,raw_input,false);
+        return res;
     }
     
     return 0;
 
 }
 
-  
+//export PATH=/home/kevinpros/workspace/NJU-FLA2020Fall-Project:$PATH
 /*
 testcase
 turing --help
 turing palindrome_detector_2tapes.tm 100010001
 */
 
-int main()
+int main(int argc,char *argv[])
 {
-    while(1)
+    if(argc==0)
     {
-        cout<<"$ ";
-        string input;
-        getline(cin, input);
-        comandline_parser(input);
+        while(1)
+        {
+            cout<<"$ ";
+            string input;
+            getline(cin, input);
+            int res=comandline_parser(input);
+            if(res!=1)
+            {
+                return -1;
+            }
+        }
+        return 1;
     }
-    return 1;
+    else
+    {
+        vector<string> param;
+        for(int i=0;i<argc;i++)
+        {
+            string temp=argv[i];
+            //cout<<"argument["<<i<<"] is: "<<argv[i]<<endl;
+            param.push_back(temp);
+        }
+        string command;
+        for(int i(0);i<param.size();i++)
+        {
+            command+=param[i];
+            command+=" ";
+        }
+        int res=comandline_parser(command);
+        if(res!=1)
+        {
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
+        
+    }
+    
+    
 }

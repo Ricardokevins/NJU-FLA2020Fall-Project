@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named FLA2020
+# Target rules for targets named turing
 
 # Build rule for target.
-FLA2020: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FLA2020
-.PHONY : FLA2020
+turing: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 turing
+.PHONY : turing
 
 # fast build rule for target.
-FLA2020/fast:
-	$(MAKE) -f CMakeFiles/FLA2020.dir/build.make CMakeFiles/FLA2020.dir/build
-.PHONY : FLA2020/fast
+turing/fast:
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/build
+.PHONY : turing/fast
 
 src/main.o: src/main.cpp.o
 
@@ -129,7 +129,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/FLA2020.dir/build.make CMakeFiles/FLA2020.dir/src/main.cpp.o
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -138,7 +138,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/FLA2020.dir/build.make CMakeFiles/FLA2020.dir/src/main.cpp.i
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -147,7 +147,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/FLA2020.dir/build.make CMakeFiles/FLA2020.dir/src/main.cpp.s
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 # Help Target
@@ -158,7 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... FLA2020"
+	@echo "... turing"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -129,7 +129,7 @@ CMAKE_OBJCOPY:FILEPATH=/bin/objcopy
 CMAKE_OBJDUMP:FILEPATH=/bin/objdump
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=FLA2020
+CMAKE_PROJECT_NAME:STATIC=turing
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/bin/ranlib
@@ -185,6 +185,12 @@ FLA2020_BINARY_DIR:STATIC=/home/kevinpros/workspace/NJU-FLA2020Fall-Project/buil
 
 //Value Computed by CMake
 FLA2020_SOURCE_DIR:STATIC=/home/kevinpros/workspace/NJU-FLA2020Fall-Project
+
+//Value Computed by CMake
+turing_BINARY_DIR:STATIC=/home/kevinpros/workspace/NJU-FLA2020Fall-Project/build
+
+//Value Computed by CMake
+turing_SOURCE_DIR:STATIC=/home/kevinpros/workspace/NJU-FLA2020Fall-Project
 
 
 ########################

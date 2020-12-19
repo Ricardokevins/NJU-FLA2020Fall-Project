@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kevinpros/workspace/NJU-FLA2020Fall-Project/src/main.cpp
+iostream
+-
+string
+-
+vector
+-
+string.h
+-
+fstream
+-
+
