@@ -496,7 +496,7 @@ int comandline_parser(string input)
 
 }
 
-
+  
 /*
 testcase
 turing --help
