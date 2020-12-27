@@ -544,11 +544,14 @@ int comandline_parser(string input)
 testcase
 turing --help
 turing palindrome_detector_2tapes.tm 100010001
+turing -v palindrome_detector_2tapes.tm 100010001
+
+turing -v case1.tm aaabbaaabb       
 */
 
 int main(int argc,char *argv[])
 {
-    if(argc==0)
+    if(argc==1)
     {
         while(1)
         {
