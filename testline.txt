@@ -5,6 +5,8 @@ turing --help
 turing palindrome_detector_2tapes.tm 100010001
 turing -v palindrome_detector_2tapes.tm 100010001
 
+
+------------------------ Test Case 1--------------------------------
 Accept:
 turing -v case1.tm aaabbaaabb  
 
@@ -15,7 +17,23 @@ turing -v case1.tm aaabb
 turing -v case1.tm abaa
 turing -v case1.tm ababb
 turing -v case1.tm ababa
+turing -v case1.tm bab
 # Num unequal
 turing -v case1.tm aaabbaaaa
 turing -v case1.tm aaaabbaa
 turing -v case1.tm aaaabbaaaab
+
+
+------------------------ Test Case 2--------------------------------
+Accept:
+turing -v case2.tm 1x1=1
+turing -v case2.tm 111x11=111111
+
+turing -v case2.tm 111x11=11111
+turing -v case2.tm 11x11=11111
+turing -v case2.tm 1=1
+turing -v case2.tm 11x11111
+turing -v case2.tm 1x1x11111=11
+turing -v case2.tm 1x1=1=11
+turing -v case2.tm 1x1==1
+turing -v case2.tm 1xx1=1

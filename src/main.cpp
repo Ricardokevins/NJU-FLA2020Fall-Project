@@ -193,10 +193,10 @@ public:
             {
                 cout<<"Input: "<<input<<endl;
                 cout<<" ==================== ERR ===================="<<endl;
-                cout<<"error: "<<'A'<<" was not declared in the set of input symbols"<<endl;
+                cout<<"error: "<<input[check_result]<<" was not declared in the set of input symbols"<<endl;
                 cout<<"Input: "<<input<<endl;
                 cout<<"       ";
-                for(int i(0);i<check_result;i++)
+                for(int i(0);i<check_result-1;i++)
                 {
                     cout<<" ";
                 }
@@ -425,8 +425,8 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         {
             vector<string> Tokens=split(raw_input[i]," "); 
             if(Tokens.size()!=5)
-            {
-                cout<<"Hit Bad Trap"<<endl;
+            {    
+                // cout<<"Hit Bad Trapss"<<endl;
                 continue;
             }
             string cur_state=Tokens[0];
@@ -440,7 +440,13 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             }
             else
             {
-                cout<<"Hit Bad Trap"<<endl;
+                // cout<<"Hit Bad Trap"<<endl;
+                // cout<<tape_char<<endl;
+                // cout<<int(tape_char[0])<<endl;
+                // cout<<int(tape_char[1])<<endl;
+                // cout<<char(215)<<endl;
+                // cout<<tape_char.size()<<" "<<new_char.size()<<endl;
+                // cout<<raw_input[i]<<endl;
                 continue;
             }
             delta_Func d=delta_Func(cur_state,tape_char,new_char,next_direction,next_state);
