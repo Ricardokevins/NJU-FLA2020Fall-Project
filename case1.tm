@@ -1,5 +1,5 @@
 ; first to design a tm to check the string distribute
-#Q = {0,qa,qab,qaba,qabab,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject}
+#Q = {0,qa,qab,qaba,qabab,accept,accept2,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject}
 
 #S = {a,b}
 
@@ -14,6 +14,8 @@
 #N = 3
 
 0 a__ _a_ rr* qa
+0 ___ ___ *** rightreject
+0 b__ b__ *** rightreject
 
 qa a__ _a_ rr* qa
 qa b__ b__ *** qab
