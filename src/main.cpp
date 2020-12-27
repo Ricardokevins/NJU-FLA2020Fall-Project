@@ -539,15 +539,6 @@ int comandline_parser(string input)
 
 }
 
-//export PATH=/home/kevinpros/workspace/NJU-FLA2020Fall-Project:$PATH
-/*
-testcase
-turing --help
-turing palindrome_detector_2tapes.tm 100010001
-turing -v palindrome_detector_2tapes.tm 100010001
-
-turing -v case1.tm aaabbaaabb       
-*/
 
 int main(int argc,char *argv[])
 {

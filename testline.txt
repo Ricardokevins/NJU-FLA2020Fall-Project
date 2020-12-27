@@ -1,0 +1,21 @@
+export PATH=/home/kevinpros/workspace/NJU-FLA2020Fall-Project:$PATH
+
+
+turing --help
+turing palindrome_detector_2tapes.tm 100010001
+turing -v palindrome_detector_2tapes.tm 100010001
+
+Accept:
+turing -v case1.tm aaabbaaabb  
+
+Reject
+# String Struct
+turing -v case1.tm aaa
+turing -v case1.tm aaabb
+turing -v case1.tm abaa
+turing -v case1.tm ababb
+turing -v case1.tm ababa
+# Num unequal
+turing -v case1.tm aaabbaaaa
+turing -v case1.tm aaaabbaa
+turing -v case1.tm aaaabbaaaab
