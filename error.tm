@@ -1,9 +1,9 @@
 ; first to design a tm to check the string distribute
-#Q = {0,q_cp_multiplier1,q_multiply,q_reset,q_cp_multiplier2,q_check,q_reset_result,accept,accept2,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject,halt_accept}
+#Q = {0,q_cp_multiplier1,q_multiply,q_reset,q_cp_multiplier2,q_check,q_reset_result,accept,accept2,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject}
 
 #S = {1,x,=}
 
-#G = {1,x,=,_,t,r,u,e,f,a,l,s}
+#G = {1,x,=,_}
 
 #q0 = 0
 
@@ -34,8 +34,7 @@ q_cp_multiplier2 1__ ___ rl* q_multiply
 q_reset_result 111 111 **l q_reset_result
 q_reset_result 11_ 11_ **r q_check
 q_reset_result =11 =__ *** rightreject
-q_reset_result x11 x__ *** rightreject
-q_reset_result _11 ___ *** rightreject
+q_reset_result *11 *__ *** rightreject
 
 q_check 111 _1_ r*r q_check
 q_check 11_ 1__ *** rightreject
@@ -46,6 +45,7 @@ q_check x1_ x__ *** rightreject
 
 q_check _11 ___ *** rightreject
 q_check _1_ ___ *** accept
+
 
 accept ___ t__ r** accept2
 accept2 ___ r__ r** accept3

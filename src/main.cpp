@@ -188,20 +188,23 @@ public:
         if(check_result!=-1)
         {
             if(verbose_mode==false)
-                return -1;
+            {
+                cerr << "illegal input\n";
+                exit(-1);
+            }
             else
             {
-                cout<<"Input: "<<input<<endl;
-                cout<<" ==================== ERR ===================="<<endl;
-                cout<<"error: "<<input[check_result]<<" was not declared in the set of input symbols"<<endl;
-                cout<<"Input: "<<input<<endl;
-                cout<<"       ";
-                for(int i(0);i<check_result-1;i++)
+                cerr<<"Input: "<<input<<endl;
+                cerr<<" ==================== ERR ===================="<<endl;
+                cerr<<"error: "<<input[check_result]<<" was not declared in the set of input symbols"<<endl;
+                cerr<<"Input: "<<input<<endl;
+                cerr<<"       ";
+                for(int i(0);i<check_result;i++)
                 {
-                    cout<<" ";
+                    cerr<<" ";
                 }
-                cout<<"^"<<endl;
-                return -1;
+                cerr<<"^"<<endl;
+                exit(-1);
             }
             
         }
@@ -252,12 +255,7 @@ public:
             if(matched_transition_function_pos==-1)
             {
                 break;
-            }
-            // else
-            // {
-            //     delta_Funcs[matched_transition_function_pos].cout_rule();
-            // }
-            
+            }        
             for(int j(0);j<tapes.size();j++)
             {
                 tapes[j][head_pos[j]]=delta_Funcs[matched_transition_function_pos].newChar[j];
@@ -395,7 +393,7 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             for(int j=0;j<temp.size();j++)
             {
                 G.push_back(temp[j][0]);
-            }         
+            }
             continue;
         }
         //Meet Start State and try to set q0
@@ -424,10 +422,11 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         else
         {
             vector<string> Tokens=split(raw_input[i]," "); 
+            
             if(Tokens.size()!=5)
             {    
-                // cout<<"Hit Bad Trapss"<<endl;
-                continue;
+                cerr<<"syntax error\n";
+                exit(-1);
             }
             string cur_state=Tokens[0];
             string tape_char=Tokens[1];
@@ -436,19 +435,99 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             string next_state=Tokens[4];
             if(tape_char.size()==new_char.size()&&new_char.size()==next_direction.size()&&next_direction.size()==N)
             {
-                ;
-            }
+                //size 符合要求，检查一下里面的内容对不对
+                for(int i=0;i<tape_char.size();i++)
+                {
+                    int flag=0;
+                    for(int j(0);j<G.size();j++)
+                    {
+                        if(G[j]==tape_char[i])
+                        {
+                            flag=1;
+                            break;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        
+                        cerr<<"syntax error\n";
+                        exit(-1);
+                    }
+                }
+                
+                for(int i=0;i<new_char.size();i++)
+                {
+                    int flag=0;
+                    for(int j(0);j<G.size();j++)
+                    {
+                        if(G[j]==new_char[i])
+                        {
+                            flag=1;
+                            break;
+                        }
+                        
+                    }
+                    if(flag==0)
+                    {
+                        
+                        cerr<<"syntax error\n";
+                        exit(-1);
+                    }
+                }
+               
+                for(int i=0;i<next_direction.size();i++)
+                {
+                    if(next_direction[i]!='r')
+                    {
+                        if(next_direction[i]!='l')
+                        {
+                            if(next_direction[i]!='*')
+                            {
+                                
+                                cerr<<"syntax error\n";
+                                exit(-1);
+                            }
+                        }
+                    }
+                }
+                int flag=0;
+                for(int i=0;i<Q.size();i++)
+                {
+                    if(Q[i]==cur_state)
+                    {
+                        flag=1;
+                        break;
+                    }
+                }
+                if (flag==0)
+                {
+                    
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
+                int flag1=0;
+                for(int i=0;i<Q.size();i++)
+                {
+                    if(Q[i]==next_state)
+                    {
+                        flag1=1;
+                        break;
+                    }
+                }
+                if (flag1==0)
+                {
+                    
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
+            }   
             else
             {
-                // cout<<"Hit Bad Trap"<<endl;
-                // cout<<tape_char<<endl;
-                // cout<<int(tape_char[0])<<endl;
-                // cout<<int(tape_char[1])<<endl;
-                // cout<<char(215)<<endl;
-                // cout<<tape_char.size()<<" "<<new_char.size()<<endl;
-                // cout<<raw_input[i]<<endl;
-                continue;
+                
+                cerr<<"syntax error\n";
+                exit(-1);
             }
+            
             delta_Func d=delta_Func(cur_state,tape_char,new_char,next_direction,next_state);
             delta_Funcs.push_back(d);  
         }
@@ -464,7 +543,7 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
 
 TM get_TM(string input,bool verbose_flag)
 {
-    //TODO: to parse the file and get Turing Machhine here
+    // parse the file and get Turing Machhine here
     // Use This function to get turgin machine
     // Just read the file first and pass content to parser
 
@@ -480,7 +559,8 @@ TM get_TM(string input,bool verbose_flag)
     }
     else 
     {
-        cout <<"no such file" << endl;
+        cerr <<"no such file" << endl;
+        exit(-1);
     }
     return TM_parser(raw_input,verbose_flag);
 
@@ -569,7 +649,6 @@ int main(int argc,char *argv[])
         for(int i=0;i<argc;i++)
         {
             string temp=argv[i];
-            //cout<<"argument["<<i<<"] is: "<<argv[i]<<endl;
             param.push_back(temp);
         }
         string command;
