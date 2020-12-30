@@ -1,9 +1,9 @@
 ; first to design a tm to check the string distribute
-#Q = {0,qa,qab,qaba,qabab,accept,accept2,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject}
+#Q = {0,qa,qab,qaba,qabab,accept,accept2,accept3,accept4,leftreject,rightreject,reject2,reject3,reject4,reject5,halt_reject,halt_accept}
 
 #S = {a,b}
 
-#G = {a,b,c,_}
+#G = {a,b,_,t,r,u,e,f,a,l,s}
 
 #q0 = 0
 

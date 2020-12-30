@@ -372,6 +372,16 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         {
             string cut=cut_bracket(raw_input[i]);
             Q=split(cut,",");   
+            if(Q.size()==0)
+            {
+                cerr<<"syntax error\n";
+                exit(-1);
+            }
+            //检查一下是不是都是符合规范的
+            for(int k(0);k<Q.size();k++)
+            {
+                
+            }
             continue;   
         }
         //Meet Input Symbol Set And try yo set S
@@ -530,9 +540,10 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             
             delta_Func d=delta_Func(cur_state,tape_char,new_char,next_direction,next_state);
             delta_Funcs.push_back(d);  
+            
         }
         
-
+        //cout<<raw_input[i]<<endl;
 
     }
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs,verbose_flag);
