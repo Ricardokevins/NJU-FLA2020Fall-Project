@@ -702,9 +702,32 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         exit(-1);
     }
     
+    for(int l(0);l<F.size();l++)
+    {
+        int find_F_flag=0;
+        for(int j(0);j<Q.size();j++)
+        {
+            if(Q[j]==F[l])
+            {
+                find_F_flag=1;
+                break;
+            }
+        }
+        if(find_F_flag==0)
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+    }
+    
+    //保证纸带数目至少大于0
+    if(N<=0)
+    {
+        cerr<<"syntax error\n";
+        exit(-1);
+    }
     
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs,verbose_flag);
-    // target_TM.Print_state();
     return target_TM;
 
 }
@@ -795,7 +818,6 @@ int comandline_parser(vector<string> result)
     return 0;
 
 }
-
 
 int main(int argc,char *argv[])
 {
