@@ -115,36 +115,63 @@ public:
 
     void Verbose(int step)
     {
-        cout<<std::left<<"Step    : "<<std::left<<step<<endl;
+        cout<<std::left<<"Step   : "<<std::left<<step<<endl;
         for(int i(0);i<N;i++)
         {
-            cout<<std::left<<"Index "<<std::left<<i<<std::left<<" : ";
+            vector<int>spaceNum;
+            cout<<std::left<<"Index"<<std::left<<i<<std::left<<" : ";
             for(int j(0);j<tapes[i].size();j++)
             {
-                cout<<std::left<<leftmost_tag[i]+j<<std::left<<" ";
+                int pos=leftmost_tag[i]+j;
+                if(pos<0)
+                {
+                    pos=-pos;
+                }
+                if(pos<10)
+                {
+                    spaceNum.push_back(1);
+                }
+                else
+                {
+                    if(pos<100)
+                    {
+                        spaceNum.push_back(2);
+                    }
+                    
+                }
+                
+                cout<<std::left<<pos<<std::left<<" ";
             }
             cout<<endl;
-            cout<<std::left<<"Tape  "<<std::left<<i<<std::left<<" : ";
+            cout<<std::left<<"Tape"<<std::left<<i<<std::left<<"  : ";
             for(int j(0);j<tapes[i].size();j++)
             {
-                cout<<std::left<<tapes[i][j]<<std::left<<" ";
+                cout<<std::left<<tapes[i][j];
+                for(int l(0);l<spaceNum[j];l++)
+                {
+                    cout<<" ";
+                }
             }
             cout<<endl;
-            cout<<std::left<<"Head  "<<std::left<<i<<" : ";
+            cout<<std::left<<"Head"<<std::left<<i<<"  : ";
             for(int j(0);j<tapes[i].size();j++)
             {
                 if(j==head_pos[i])
                 {
-                    cout<<std::left<<"^"<<std::left<<" ";
+                    cout<<std::left<<"^"<<std::left;
                 }
                 else           
+                {   
+                    cout<<std::left<<" "<<std::left;
+                }
+                for(int l(0);l<spaceNum[j];l++)
                 {
-                    cout<<std::left<<" "<<std::left<<" ";
+                    cout<<" ";
                 }
             }
             cout<<endl;
         }
-        cout<<"State   : "<<cur_state<<endl;
+        cout<<"State  : "<<cur_state<<endl;
         cout<<"---------------------------------------------"<<endl;
     }
 
@@ -195,7 +222,7 @@ public:
             else
             {
                 cerr<<"Input: "<<input<<endl;
-                cerr<<" ==================== ERR ===================="<<endl;
+                cerr<<"===================== ERR ===================="<<endl;
                 cerr<<"error: "<<input[check_result]<<" was not declared in the set of input symbols"<<endl;
                 cerr<<"Input: "<<input<<endl;
                 cerr<<"       ";
@@ -302,7 +329,7 @@ public:
         if(verbose_mode==true)
         {
             cout<<"Result: "<<tapes[0]<<endl;
-            cout<<" ==================== END ===================="<<endl;
+            cout<<"===================== END ===================="<<endl;
         }
         else
         {
@@ -423,6 +450,11 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         {
             string temp=raw_input[i].substr(raw_input[i].size()-1,1);
             B=temp[0];
+            if(B!='_')
+            {
+                cerr<<"syntax error\n";
+                exit(-1);
+            }
             continue;
         }
         if((raw_input[i][0] == '#') && (raw_input[i][1]=='F')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
@@ -468,101 +500,6 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             string new_char=Tokens[2];
             string next_direction=Tokens[3];
             string next_state=Tokens[4];
-            if(tape_char.size()==new_char.size()&&new_char.size()==next_direction.size()&&next_direction.size()==N)
-            {
-                //size 符合要求，检查一下里面的内容对不对
-                for(int i=0;i<tape_char.size();i++)
-                {
-                    int flag=0;
-                    for(int j(0);j<G.size();j++)
-                    {
-                        if(G[j]==tape_char[i])
-                        {
-                            flag=1;
-                            break;
-                        }
-                    }
-                    if(flag==0)
-                    {
-                        
-                        cerr<<"syntax error\n";
-                        exit(-1);
-                    }
-                }
-                
-                for(int i=0;i<new_char.size();i++)
-                {
-                    int flag=0;
-                    for(int j(0);j<G.size();j++)
-                    {
-                        if(G[j]==new_char[i])
-                        {
-                            flag=1;
-                            break;
-                        }
-                        
-                    }
-                    if(flag==0)
-                    {
-                        
-                        cerr<<"syntax error\n";
-                        exit(-1);
-                    }
-                }
-               
-                for(int i=0;i<next_direction.size();i++)
-                {
-                    if(next_direction[i]!='r')
-                    {
-                        if(next_direction[i]!='l')
-                        {
-                            if(next_direction[i]!='*')
-                            {
-                                
-                                cerr<<"syntax error\n";
-                                exit(-1);
-                            }
-                        }
-                    }
-                }
-                int flag=0;
-                for(int i=0;i<Q.size();i++)
-                {
-                    if(Q[i]==cur_state)
-                    {
-                        flag=1;
-                        break;
-                    }
-                }
-                if (flag==0)
-                {
-                    
-                    cerr<<"syntax error\n";
-                    exit(-1);
-                }
-                int flag1=0;
-                for(int i=0;i<Q.size();i++)
-                {
-                    if(Q[i]==next_state)
-                    {
-                        flag1=1;
-                        break;
-                    }
-                }
-                if (flag1==0)
-                {
-                    
-                    cerr<<"syntax error\n";
-                    exit(-1);
-                }
-            }   
-            else
-            {
-                
-                cerr<<"syntax error\n";
-                exit(-1);
-            }
-            
             delta_Func d=delta_Func(cur_state,tape_char,new_char,next_direction,next_state);
             delta_Funcs.push_back(d);  
             
@@ -727,6 +664,108 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         exit(-1);
     }
     
+    for(int i(0);i<delta_Funcs.size();i++)
+    {
+        string cur_state=delta_Funcs[i].cur_state;
+        string tape_char=delta_Funcs[i].head;
+        string new_char=delta_Funcs[i].newChar;
+        string next_direction=delta_Funcs[i].direction;
+        string next_state=delta_Funcs[i].next_state;
+        if(tape_char.size()==new_char.size()&&new_char.size()==next_direction.size()&&next_direction.size()==N)
+            {
+                //size 符合要求，检查一下里面的内容对不对
+                for(int i=0;i<tape_char.size();i++)
+                {
+                    int flag=0;
+                    for(int j(0);j<G.size();j++)
+                    {
+                        if(G[j]==tape_char[i])
+                        {
+                            flag=1;
+                            break;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        
+                        cerr<<"syntax error\n";
+                        exit(-1);
+                    }
+                }
+                
+                for(int i=0;i<new_char.size();i++)
+                {
+                    int flag=0;
+                    for(int j(0);j<G.size();j++)
+                    {
+                        if(G[j]==new_char[i])
+                        {
+                            flag=1;
+                            break;
+                        }
+                        
+                    }
+                    if(flag==0)
+                    {
+                        
+                        cerr<<"syntax error\n";
+                        exit(-1);
+                    }
+                }
+               
+                for(int i=0;i<next_direction.size();i++)
+                {
+                    if(next_direction[i]!='r')
+                    {
+                        if(next_direction[i]!='l')
+                        {
+                            if(next_direction[i]!='*')
+                            {
+                                
+                                cerr<<"syntax error\n";
+                                exit(-1);
+                            }
+                        }
+                    }
+                }
+                int flag=0;
+                for(int i=0;i<Q.size();i++)
+                {
+                    if(Q[i]==cur_state)
+                    {
+                        flag=1;
+                        break;
+                    }
+                }
+                if (flag==0)
+                {
+                    
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
+                int flag1=0;
+                for(int i=0;i<Q.size();i++)
+                {
+                    if(Q[i]==next_state)
+                    {
+                        flag1=1;
+                        break;
+                    }
+                }
+                if (flag1==0)
+                {
+                    
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
+            }   
+            else
+            {
+                
+                cerr<<"syntax error\n";
+                exit(-1);
+            }
+    }
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs,verbose_flag);
     return target_TM;
 
@@ -750,7 +789,7 @@ TM get_TM(string input,bool verbose_flag)
     }
     else 
     {
-        cerr <<"syntax error\n" << endl;
+        cerr <<"syntax error\n";
         exit(-1);
     }
     return TM_parser(raw_input,verbose_flag);
@@ -771,15 +810,15 @@ int comandline_parser(vector<string> result)
     bool stderr_log=false;
     if(result.size()<2)
     {
-        cerr <<"syntax error\n" << endl;
+        cerr <<"syntax error\n" ;
         exit(-1);
     }
-    if(result[0]!="turing")
+    if(result[0]!="turing"&&result[0]!="./turing")
     {
-        cerr <<"syntax error\n" << endl;
+        cerr <<"syntax error\n";
         exit(-1);
     }
-    if(result[1]=="--help")
+    if(result[1]=="--help"||result[1]=="-h")
     {
         cout<<"usage: turing [-v|--verbose] [-h|--help] <tm> <input>"<<endl;
         return 1;
@@ -789,7 +828,7 @@ int comandline_parser(vector<string> result)
         stderr_log=true;
         if(result.size()!=4)
         {
-            cerr <<"syntax error\n" << endl;
+            cerr <<"syntax error\n";
             exit(-1);
         }
         else
@@ -804,7 +843,7 @@ int comandline_parser(vector<string> result)
     if(result.size()!=3)
     {
 
-        cerr <<"syntax error\n" << endl;
+        cerr <<"syntax error\n";
         exit(-1);
     }
     else
