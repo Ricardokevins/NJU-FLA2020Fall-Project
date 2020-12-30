@@ -353,6 +353,7 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
     {
         string temp_string=raw_input[i];
         raw_input[i]="";
+        //把不是注释的部分都删除，即不拷贝到新的字符串里
         for(int l(0);l<temp_string.size();l++)
         {
             if(temp_string[l]==';')
@@ -371,8 +372,13 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
         {
             continue;
         }
+        if(raw_input[i].size()<6)
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
         //Meet  sate  set line And try to set Q
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='Q')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
             string cut=cut_bracket(raw_input[i]);
             Q=split(cut,",");   
@@ -382,14 +388,11 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
                 exit(-1);
             }
             //检查一下是不是都是符合规范的
-            for(int k(0);k<Q.size();k++)
-            {
-                
-            }
+
             continue;   
         }
         //Meet Input Symbol Set And try yo set S
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='S'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='S')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
             string cut=cut_bracket(raw_input[i]);
             vector<string>temp=split(cut,",");  
@@ -400,7 +403,7 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             continue;
         }
         //Meet Type Symbol Set And try yo set G
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='G'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='G')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
             string cut=cut_bracket(raw_input[i]);
             vector<string>temp=split(cut,","); 
@@ -411,32 +414,50 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             continue;
         }
         //Meet Start State and try to set q0
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='q')&& (raw_input[i][2]=='0'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='q')&& (raw_input[i][2]=='0')&&(raw_input[i][3]==' ')&&(raw_input[i][4]=='=')&&(raw_input[i][5]==' '))
         {
             q0=raw_input[i].substr(raw_input[i].size()-1,1);
             continue;
         }
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='B'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='B')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
             string temp=raw_input[i].substr(raw_input[i].size()-1,1);
             B=temp[0];
             continue;
         }
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='F'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='F')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
             string cut=cut_bracket(raw_input[i]);
             F=split(cut,",");      
             continue;
         }
-        if((raw_input[i][0] == '#') && (raw_input[i][1]=='N'))
+        if((raw_input[i][0] == '#') && (raw_input[i][1]=='N')&&(raw_input[i][2]==' ')&&(raw_input[i][3]=='=')&&(raw_input[i][4]==' '))
         {
-            N=stoi(raw_input[i].substr(raw_input[i].size()-1,1));
+            string Num=raw_input[i].substr(5,raw_input[i].size()-5);
+            if(Num.size()==0)
+            {
+                cerr<<"syntax error\n";
+                exit(-1);
+            }
+            // 检查一下到底是不是一个int类型的数字字符串
+            for(int j(0);j<Num.size();j++)
+            {
+                if(Num[j]>='0'&& Num[j]<='9')
+                {
+                    ;
+                }
+                else
+                {
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
+            }
+            N=stoi(Num);
             continue;  
         }
         else
         {
-            vector<string> Tokens=split(raw_input[i]," "); 
-            
+            vector<string> Tokens=split(raw_input[i]," ");        
             if(Tokens.size()!=5)
             {    
                 cerr<<"syntax error\n";
@@ -531,14 +552,14 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
                 if (flag1==0)
                 {
                     
-                    cerr<<"syntax error";
+                    cerr<<"syntax error\n";
                     exit(-1);
                 }
             }   
             else
             {
                 
-                cerr<<"syntax error";
+                cerr<<"syntax error\n";
                 exit(-1);
             }
             
@@ -547,9 +568,141 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             
         }
         
-        //cout<<raw_input[i]<<endl;
 
     }
+    // 上面检查了格式的合法性，这里检查一下内容的合法性
+    for(int k(0);k<Q.size();k++)
+    {
+        for(int l(0);l<Q[k].size();l++)
+        {
+            int flag=0;
+            if(Q[k][l]<='z'&&Q[k][l]>='a')
+            {
+                flag=1;
+            }
+            else
+            {
+                if(Q[k][l]<='Z'&&Q[k][l]>='A')
+                {
+                    flag=1;
+                }
+                else
+                {
+                    if(Q[k][l]<='9'&&Q[k][l]>='0')
+                    {
+                        flag=1;
+                    }
+                    else
+                    {
+                        if(Q[k][l]=='_')
+                        {
+                            flag=1;
+                        }
+                        else
+                        {
+                            cerr<<"syntax error\n";
+                            exit(-1);
+                        }
+                        
+                    }
+                    
+                }
+            }
+            
+
+        }
+    }
+    
+    for(int k(0);k<S.size();k++)
+    {
+        if(S[k]==' ')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]==',')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]==';')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]=='{')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]=='}')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]=='_')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(S[k]=='*')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+    }
+    
+    for(int k(0);k<G.size();k++)
+    {
+        if(G[k]==' ')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(G[k]==',')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(G[k]==';')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(G[k]=='{')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(G[k]=='}')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+        if(G[k]=='*')
+        {
+            cerr<<"syntax error\n";
+            exit(-1);
+        }
+    }
+    
+    //接着检查一下部分变量是否在之前建立的状态表里
+    int find_q0_flag=0;
+    for(int k(0);k<Q.size();k++)
+    {
+        if(Q[k]==q0)
+        {
+            find_q0_flag=1;
+            break;
+        }
+    }
+    if(find_q0_flag==0)
+    {
+        cerr<<"syntax error\n";
+        exit(-1);
+    }
+    
+    
     TM target_TM=TM(Q,S,G,q0,B,F,N,delta_Funcs,verbose_flag);
     // target_TM.Print_state();
     return target_TM;
@@ -574,7 +727,7 @@ TM get_TM(string input,bool verbose_flag)
     }
     else 
     {
-        cerr <<"syntax error" << endl;
+        cerr <<"syntax error\n" << endl;
         exit(-1);
     }
     return TM_parser(raw_input,verbose_flag);
@@ -595,12 +748,12 @@ int comandline_parser(vector<string> result)
     bool stderr_log=false;
     if(result.size()<2)
     {
-        cerr <<"syntax error" << endl;
+        cerr <<"syntax error\n" << endl;
         exit(-1);
     }
     if(result[0]!="turing")
     {
-        cerr <<"syntax error" << endl;
+        cerr <<"syntax error\n" << endl;
         exit(-1);
     }
     if(result[1]=="--help")
@@ -613,7 +766,7 @@ int comandline_parser(vector<string> result)
         stderr_log=true;
         if(result.size()!=4)
         {
-            cerr <<"syntax error" << endl;
+            cerr <<"syntax error\n" << endl;
             exit(-1);
         }
         else
@@ -628,7 +781,7 @@ int comandline_parser(vector<string> result)
     if(result.size()!=3)
     {
 
-        cerr <<"syntax error" << endl;
+        cerr <<"syntax error\n" << endl;
         exit(-1);
     }
     else
@@ -655,7 +808,6 @@ int main(int argc,char *argv[])
     string command;
     for(int i(0);i<param.size();i++)
     {
-        //cout<<"*"<<param[i]<<"*"<<endl;
         command+=param[i];
         command+=" ";
     }

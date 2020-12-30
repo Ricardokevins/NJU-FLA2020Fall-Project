@@ -19,6 +19,7 @@
 q_cp_multiplier1 1__ _1_ rr* q_cp_multiplier1
 q_cp_multiplier1 x__ ___ rl* q_multiply
 q_cp_multiplier1 =__ =__ *** rightreject
+q_cp_multiplier1 ___ =__ *** rightreject
 
 q_multiply 11_ 11_ *** q_reset
 q_multiply =1_ _1_ r*l q_reset_result
