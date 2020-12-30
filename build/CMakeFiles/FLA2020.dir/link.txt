@@ -1,1 +1,0 @@
-/bin/g++-9  -g   CMakeFiles/FLA2020.dir/src/main.cpp.o  -o ../FLA2020 

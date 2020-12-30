@@ -590,7 +590,7 @@ int comandline_parser(string input)
 {
     bool stderr_log=false;
     vector<string>result=split(input," ");
-    if(result.size()==0)
+    if(result.size()<2)
     {
         return -1;
     }
@@ -639,46 +639,27 @@ int comandline_parser(string input)
 
 int main(int argc,char *argv[])
 {
-    if(argc==1)
+    vector<string> param;
+    for(int i=0;i<argc;i++)
     {
-        while(1)
-        {
-            cout<<"$ ";
-            string input;
-            getline(cin, input);
-            int res=comandline_parser(input);
-            if(res!=1)
-            {
-                return -1;
-            }
-        }
-        return 1;
+        string temp=argv[i];
+        param.push_back(temp);
+    }
+    string command;
+    for(int i(0);i<param.size();i++)
+    {
+        command+=param[i];
+        command+=" ";
+    }
+    cout<<command<<endl;
+    int res=comandline_parser(command);
+    if(res!=1)
+    {
+        return -1;
     }
     else
     {
-        vector<string> param;
-        for(int i=0;i<argc;i++)
-        {
-            string temp=argv[i];
-            param.push_back(temp);
-        }
-        string command;
-        for(int i(0);i<param.size();i++)
-        {
-            command+=param[i];
-            command+=" ";
-        }
-        int res=comandline_parser(command);
-        if(res!=1)
-        {
-            return -1;
-        }
-        else
-        {
-            return 1;
-        }
-        
+        return 1;
     }
-    
-    
+    return 0;
 }

@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/kevinpros/workspace/NJU-FLA2020Fall-Project/build",
-  "command": "/bin/g++-9    -g   -std=gnu++11 -o CMakeFiles/turing.dir/src/main.cpp.o -c /home/kevinpros/workspace/NJU-FLA2020Fall-Project/src/main.cpp",
-  "file": "/home/kevinpros/workspace/NJU-FLA2020Fall-Project/src/main.cpp"
-}
-]
