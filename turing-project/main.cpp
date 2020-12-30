@@ -228,6 +228,10 @@ public:
             leftmost_tag.push_back(0);
         }
         //init Tape1 especically
+        if(input.size()==0)
+        {
+            input="_";
+        }
         tapes[0]=input;
         if(verbose_mode == true)
             Verbose(step);
@@ -527,14 +531,14 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
                 if (flag1==0)
                 {
                     
-                    cerr<<"syntax error\n";
+                    cerr<<"syntax error";
                     exit(-1);
                 }
             }   
             else
             {
                 
-                cerr<<"syntax error\n";
+                cerr<<"syntax error";
                 exit(-1);
             }
             
@@ -570,7 +574,7 @@ TM get_TM(string input,bool verbose_flag)
     }
     else 
     {
-        cerr <<"no such file" << endl;
+        cerr <<"syntax error" << endl;
         exit(-1);
     }
     return TM_parser(raw_input,verbose_flag);
@@ -586,17 +590,18 @@ int TM_Solve(string raw_TM,string raw_input,bool verbose_flag)
     return res;;
 }
 
-int comandline_parser(string input)
+int comandline_parser(vector<string> result)
 {
     bool stderr_log=false;
-    vector<string>result=split(input," ");
     if(result.size()<2)
     {
-        return -1;
+        cerr <<"syntax error" << endl;
+        exit(-1);
     }
     if(result[0]!="turing")
     {
-        return -1;
+        cerr <<"syntax error" << endl;
+        exit(-1);
     }
     if(result[1]=="--help")
     {
@@ -608,7 +613,8 @@ int comandline_parser(string input)
         stderr_log=true;
         if(result.size()!=4)
         {
-            return -1;
+            cerr <<"syntax error" << endl;
+            exit(-1);
         }
         else
         {
@@ -622,7 +628,8 @@ int comandline_parser(string input)
     if(result.size()!=3)
     {
 
-        return -1;
+        cerr <<"syntax error" << endl;
+        exit(-1);
     }
     else
     {
@@ -648,11 +655,11 @@ int main(int argc,char *argv[])
     string command;
     for(int i(0);i<param.size();i++)
     {
+        //cout<<"*"<<param[i]<<"*"<<endl;
         command+=param[i];
         command+=" ";
     }
-    cout<<command<<endl;
-    int res=comandline_parser(command);
+    int res=comandline_parser(param);
     if(res!=1)
     {
         return -1;
