@@ -425,6 +425,11 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             vector<string>temp=split(cut,",");  
             for(int j=0;j<temp.size();j++)
             {
+                if(temp[j].size()!=1)
+                {
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
                 S.push_back(temp[j][0]);
             }    
             continue;
@@ -436,6 +441,11 @@ TM TM_parser(vector<string> raw_input,bool verbose_flag)
             vector<string>temp=split(cut,","); 
             for(int j=0;j<temp.size();j++)
             {
+                if(temp[j].size()!=1)
+                {
+                    cerr<<"syntax error\n";
+                    exit(-1);
+                }
                 G.push_back(temp[j][0]);
             }
             continue;
